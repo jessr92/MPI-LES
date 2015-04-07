@@ -106,8 +106,8 @@ subroutine aveflow(n,n1,km,jm,im,aveu,avev,avew,avep,avel,aveuu,avevv,aveww,aves
         do j = 1,jm
             do i = 1,im
                 uwfx(i,j,k) = uwfx(i,j,k)/float(nmax-n1+1) - &
-                0.5*(aveu(i,j,k-1)+aveu(i,j,k)) * &
-                0.5*(avew(i,j, k-1)+avew(i+1,j,k-1))
+                              0.5*(aveu(i,j,k-1)+aveu(i,j,k)) * &
+                              0.5*(avew(i,j, k-1)+avew(i+1,j,k-1))
             end do
         end do
     end do
