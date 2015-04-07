@@ -9,7 +9,6 @@ integer :: communicator, cartTopComm
 contains
 
 subroutine initialise_mpi()
-    implicit none
     logical :: alreadyInitialised
     communicator = MPI_COMM_WORLD
     call MPI_Initialized(alreadyInitialised, ierror)
@@ -25,13 +24,11 @@ subroutine initialise_mpi()
 end subroutine initialise_mpi
 
 subroutine finalise_mpi()
-    implicit none
     call MPI_Finalize(ierror)
     call checkMPIError()
 end subroutine
 
 subroutine checkMPIError()
-    implicit none
     integer :: abortError
     if (ierror .ne. MPI_SUCCESS) then
         print*, ierror, " MPI error!"
@@ -40,7 +37,6 @@ subroutine checkMPIError()
 end subroutine checkMPIError
 
 subroutine setupCartesianVirtualTopology(dimensions, dimensionSizes, periodicDimensions, coordinates, neighbours, reorder)
-    implicit none
     integer, intent(in) :: dimensions
     integer, intent(in) :: dimensionSizes(dimensions)
     logical, intent(in) :: periodicDimensions(dimensions)
@@ -60,66 +56,55 @@ subroutine setupCartesianVirtualTopology(dimensions, dimensionSizes, periodicDim
 end subroutine setupCartesianVirtualTopology
 
 logical function isMaster()
-    implicit none
     isMaster = rank .eq. 0
 end function isMaster
 
 logical function isTopRow(procPerRow)
-    implicit none
     integer, intent(in) :: procPerRow
     isTopRow = rank .lt. procPerRow
 end function isTopRow
 
 logical function isTopRowNeighbours(neighbours)
-    implicit none
     integer, dimension(:), intent(in) :: neighbours
     isTopRowNeighbours = neighbours(topNeighbour) .eq. -1
 end function isTopRowNeighbours
 
 logical function isBottomRow(procPerRow)
-    implicit none
     integer, intent(in) :: procPerRow
     isBottomRow = rank .gt. (mpi_size - procPerRow - 1)
 end function isBottomRow
 
 logical function isBottomRowNeighbours(neighbours)
-    implicit none
     integer, dimension(:), intent(in) :: neighbours
     isBottomRowNeighbours = neighbours(bottomNeighbour) .eq. -1
 end function isBottomRowNeighbours
 
 logical function isLeftmostColumn(procPerRow)
-    implicit none
     integer, intent(in) :: procPerRow
     isLeftmostColumn = modulo(rank, procPerRow) .eq. 0
 end function isLeftmostColumn
 
 logical function isLeftmostColumnNeighbours(neighbours)
-    implicit none
     integer, dimension(:), intent(in) :: neighbours
     isLeftmostColumnNeighbours = neighbours(leftNeighbour) .eq. -1
 end function isLeftmostColumnNeighbours
 
 logical function isRightmostColumn(procPerRow)
-    implicit none
     integer, intent(in) :: procPerRow
     isRightmostColumn = modulo(rank, procPerRow) .eq. (procPerRow - 1)
 end function isRightmostColumn
 
 logical function isRightmostColumnNeighbours(neighbours)
-    implicit none
     integer, dimension(:), intent(in) :: neighbours
     isRightmostColumnNeighbours = neighbours(rightNeighbour) .eq. -1
 end function isRightmostColumnNeighbours
 
 integer function topLeftRowValue(process, procPerRow, rowCount)
-    implicit none
     integer, intent(in) :: process, procPerRow, rowCount
     topLeftRowValue = process / procPerRow * rowCount
 end function topLeftRowValue
 
 integer function topLeftColValue(process, procPerRow, colCount)
-    implicit none
     integer, intent(in) :: process, procPerRow, colCount
     topLeftColValue = modulo(process, procPerRow) * colCount
 end function topLeftColValue

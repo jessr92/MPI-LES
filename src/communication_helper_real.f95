@@ -3,12 +3,9 @@ module communication_helper_real
 use communication_helper_mpi
 #endif
 
-implicit none
-
 contains
 
 subroutine getGlobalSumOf(value)
-    implicit none
     real(kind=4), intent(inout) :: value
 #ifdef GR_DEBUG
     print*, 'Rank: ', rank, ' before sum: ', value
@@ -23,7 +20,6 @@ subroutine getGlobalSumOf(value)
 end subroutine getGlobalSumOf
 
 subroutine getGlobalMaxOf(value)
-    implicit none
     real(kind=4), intent(inout) :: value
 #ifdef GR_DEBUG
     print*, 'Rank: ', rank, ' before max: ', value
@@ -38,7 +34,6 @@ subroutine getGlobalMaxOf(value)
 end subroutine getGlobalMaxOf
 
 subroutine getGlobalMinOf(value)
-    implicit none
     real(kind=4), intent(inout) :: value
 #ifdef GR_DEBUG
     print*, 'Rank: ', rank, ' before min: ', value
@@ -55,7 +50,6 @@ end subroutine getGlobalMinOf
 subroutine exchangeRealHalos(array, procPerRow, neighbours, leftThickness, &
                                 rightThickness, topThickness, &
                                 bottomThickness)
-    implicit none
     real(kind=4), dimension(:,:,:), intent(inout) :: array
     integer, dimension(:), intent(in) :: neighbours
     integer, intent(in) :: procPerRow, leftThickness, rightThickness, topThickness, bottomThickness
@@ -218,7 +212,6 @@ subroutine exchangeRealHalos(array, procPerRow, neighbours, leftThickness, &
 end subroutine exchangeRealHalos
 
 subroutine exchangeRealCorners(array, procPerRow, leftThickness, rightThickness, topThickness, bottomThickness)
-    implicit none
     integer, intent(in) :: procPerRow, leftThickness, rightThickness, topThickness, bottomThickness
     real(kind=4), dimension(:,:,:), intent(inout) :: array
     real(kind=4), dimension(:,:,:), allocatable :: topLeftRecv, topRightRecv, bottomLeftRecv, bottomRightRecv
@@ -375,7 +368,6 @@ end subroutine exchangeRealCorners
 
 subroutine sideflowRightLeft(array, procPerRow, colToSend, colToRecv, &
                              topThickness, bottomThickness, ignoreFirstK, ignoreLastK)
-    implicit none
     integer, intent(in) :: procPerRow, colToSend, colToRecv, topThickness, bottomThickness
     real(kind=4), dimension(:,:,:), intent(inout) :: array
     real(kind=4), dimension(:,:), allocatable :: leftRecv, rightSend
@@ -414,7 +406,6 @@ end subroutine sideflowRightLeft
 
 subroutine sideflowLeftRight(array, procPerRow, colToSend, colToRecv, &
                              topThickness, bottomThickness, ignoreFirstK, ignoreLastK)
-    implicit none
     integer, intent(in) :: procPerRow, colToSend, colToRecv, topThickness, bottomThickness
     real(kind=4), dimension(:,:,:), intent(inout) :: array
     real(kind=4), dimension(:,:), allocatable :: leftSend, rightRecv
@@ -449,7 +440,6 @@ subroutine sideflowLeftRight(array, procPerRow, colToSend, colToRecv, &
 end subroutine sideflowLeftRight
 
 subroutine distributeZBM(zbm, ip, jp, ipmax, jpmax, procPerRow)
-    implicit none
     integer, intent(in) :: ip, jp, ipmax, jpmax, procPerRow
     real(kind=4), dimension(-1:ipmax+1,-1:jpmax+1) , intent(InOut) :: zbm
     integer :: startRow, startCol, i, r, c
@@ -488,7 +478,6 @@ subroutine distributeZBM(zbm, ip, jp, ipmax, jpmax, procPerRow)
 end subroutine distributeZBM
 
 subroutine distribute1DRealRowWiseArray(arrayToBeSent, receivingArray, leftBoundary, rightBoundary, procPerRow)
-    implicit none
     real(kind=4), dimension(:), intent(in) :: arrayToBeSent
     real(kind=4), dimension(:), intent(out) :: receivingArray
     real(kind=4), dimension(:), allocatable :: sendBuffer
@@ -531,7 +520,6 @@ subroutine distribute1DRealRowWiseArray(arrayToBeSent, receivingArray, leftBound
 end subroutine distribute1DRealRowWiseArray
 
 subroutine distribute1DRealColumnWiseArray(arrayToBeSent, receivingArray, leftBoundary, rightBoundary, procPerRow)
-    implicit none
     real(kind=4), dimension(:), intent(in) :: arrayToBeSent
     real(kind=4), dimension(:), intent(out) :: receivingArray
     real(kind=4), dimension(:), allocatable :: sendBuffer
@@ -574,7 +562,6 @@ end subroutine distribute1DRealColumnWiseArray
 
 subroutine collect3DReal4Array(array, arrayTot, leftBoundary, rightBoundary, &
                                topBoundary, bottomBoundary, ip, jp, kp, procPerRow)
-    implicit none
     real(kind=4), dimension(:,:,:), intent(in) :: array
     real(kind=4), dimension(:,:,:), intent(out) :: arrayTot
     integer, intent(in) :: leftBoundary, rightBoundary, topBoundary, bottomBoundary

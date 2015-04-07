@@ -1,10 +1,11 @@
 module module_boundp
 
+implicit none
+
 contains
 
 subroutine boundp2(jm,im,p,km)
     use common_sn ! create_new_include_statements() line 102
-    implicit none
     integer, intent(In) :: im
     integer, intent(In) :: jm
     integer, intent(In) :: km
@@ -26,7 +27,6 @@ end subroutine boundp2
 
 subroutine boundp1(km,jm,p,im)
     use common_sn ! create_new_include_statements() line 102
-    implicit none
     integer, intent(In) :: im
     integer, intent(In) :: jm
     integer, intent(In) :: km
