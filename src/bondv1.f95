@@ -16,16 +16,16 @@ subroutine bondv1(jm,u,z2,dzn,v,w,km,n,im,dt,dxs)
     real(kind=4) :: u_val
     integer :: i, j, k
     real(kind=4) :: aaa, bbb, uout
-#if defined(MPI) || defined(GMCF)
+#ifdef MPI
     integer :: a
 #endif
-! 
-! 
+!
+!
 ! -------------------inflow-------------------
-! 
+!
 !      Setup for initial wind profile
-! 
-#if defined(MPI) || defined(GMCF)
+!
+#ifdef MPI
     if (isTopRow(procPerRow)) then
 #endif
         do i = 0,1
@@ -49,14 +49,14 @@ subroutine bondv1(jm,u,z2,dzn,v,w,km,n,im,dt,dxs)
                 end do
             end do
         end do
-#if defined(MPI) || defined(GMCF)
+#ifdef MPI
     end if
 #endif
 
 #if ICAL == 0
     !if(ical == 0.and.n == 1) then
     if(n == 1) then
-#if defined(MPI) || defined(GMCF)
+#ifdef MPI
         ! GR: Actually make this distributed rather than this awful mess
         do a=1, procPerCol
             do k = 1,km
@@ -83,15 +83,15 @@ subroutine bondv1(jm,u,z2,dzn,v,w,km,n,im,dt,dxs)
             end do
         end do
     endif
-#endif  
-    
+#endif
+
 #ifdef WV_DEBUG
     print *, 'F95: BONDV1_INIT_UVW: UVWSUM: ',n,sum(u)+sum(v)+sum(w)
 #endif
 
 ! ------------- outflow condition ------------
 !      advective condition
-! 
+!
     aaa = 0.0
     bbb = 0.0
     do k = 1,km
@@ -100,7 +100,7 @@ subroutine bondv1(jm,u,z2,dzn,v,w,km,n,im,dt,dxs)
             bbb = amin1(bbb,u(im,j,k))
         end do
     end do
-#if defined(MPI) || defined(GMCF)
+#ifdef MPI
     call getGlobalMaxOf(aaa)
     call getGlobalMinOf(bbb)
 #endif
@@ -129,14 +129,14 @@ subroutine bondv1(jm,u,z2,dzn,v,w,km,n,im,dt,dxs)
             w(im+1,j,k) = w(im+1,j,k)-dt*uout *(w(im+1,j,k)-w(im,j,k))/dxs(im)
         end do
     end do
-#if !defined(MPI) && !defined(GMCF) || (PROC_PER_ROW==1)
+#if !defined(MPI) || (PROC_PER_ROW==1)
 ! --side flow condition; periodic
     do k = 0,km+1
         do i = 0,im+1
             u(i,   0,k) = u(i,jm  ,k)
             u(i,jm+1,k) = u(i,   1,k)
         end do
-    end do 
+    end do
 
     do k = 0,km+1
         do i = 0,im+1
@@ -150,7 +150,7 @@ subroutine bondv1(jm,u,z2,dzn,v,w,km,n,im,dt,dxs)
             w(i,   0,k) = w(i,jm  ,k)
             w(i,jm+1,k) = w(i,   1,k)
         end do
-    end do 
+    end do
 #else
     ! call assumes column (jp) index from 1, not -1 hence values are +2 from original code
     call sideflowRightLeft(u, procPerRow, jp+2, 2, 0, 0, 0, 0)
@@ -162,17 +162,11 @@ subroutine bondv1(jm,u,z2,dzn,v,w,km,n,im,dt,dxs)
 #endif
 
 ! =================================
-#if defined(MPI) || defined(GMCF)
+#ifdef MPI
 ! --halo exchanges
     call exchangeRealHalos(u, procPerRow, neighbours, 2, 1, 1, 1)
     call exchangeRealHalos(v, procPerRow, neighbours, 2, 1, 1, 1)
     call exchangeRealHalos(w, procPerRow, neighbours, 2, 1, 1, 1)
-#else
-#ifdef ESTIMATE_CORNERS
-    call calculateCornersNonMPI(u, 2, 1, 1, 1)
-    call calculateCornersNonMPI(v, 2, 1, 1, 1)
-    call calculateCornersNonMPI(w, 2, 1, 1, 1)
-#endif
 #endif
 
 ! -------top and underground condition
@@ -203,4 +197,3 @@ subroutine bondv1(jm,u,z2,dzn,v,w,km,n,im,dt,dxs)
 end subroutine bondv1
 
 end module module_bondv1
-

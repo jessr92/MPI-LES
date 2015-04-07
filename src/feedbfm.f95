@@ -16,7 +16,7 @@ subroutine feedbfm(km,jm,im,amask1,bmask1,cmask1,dmask1,zbm,z2,dzn)
     real(kind=4), dimension(kp+2) , intent(In) :: z2
     real(kind=4), dimension(-1:ipmax+1,-1:jpmax+1) , intent(InOut) :: zbm
     integer :: i, j, k
-! 
+!
 !    print *, 'Urban model'
 ! -------Urban model----------
     do k = 1,km
@@ -29,7 +29,7 @@ subroutine feedbfm(km,jm,im,amask1,bmask1,cmask1,dmask1,zbm,z2,dzn)
             end do
         end do
     end do
-#if defined(MPI) || defined(GMCF)
+#ifdef MPI
     if (isMaster()) then
 #endif
         print*, 'zbm sum - file getting read'
@@ -38,11 +38,11 @@ subroutine feedbfm(km,jm,im,amask1,bmask1,cmask1,dmask1,zbm,z2,dzn)
         open(70,file='GIS/Tokyo_20mgrid.txt', form='formatted',status='unknown')
         do j = 100,1,-1
             do i = 1,100
-                read(70,*) zbm(i+25,j+25) 
+                read(70,*) zbm(i+25,j+25)
             end do
         end do
         close(70)
-#if defined(MPI) || defined(GMCF)
+#ifdef MPI
     end if
     call distributeZBM(zbm, ip, jp, ipmax, jpmax, procPerRow)
 #endif
@@ -71,14 +71,13 @@ subroutine feedbfm(km,jm,im,amask1,bmask1,cmask1,dmask1,zbm,z2,dzn)
             end do
         end do
     end do
-#if defined(MPI) || defined(GMCF)
+#ifdef MPI
     call exchangeRealHalos(amask1, procPerRow, neighbours, 1, 1, 1, 1)
     call exchangeRealHalos(bmask1, procPerRow, neighbours, 1, 1, 2, 1)
     call exchangeRealHalos(cmask1, procPerRow, neighbours, 2, 1, 1, 1)
     call exchangeRealHalos(dmask1, procPerRow, neighbours, 1, 1, 1, 1)
 #endif
-! 
+!
 end subroutine feedbfm
 
 end module module_feedbfm
-

@@ -38,8 +38,8 @@ contains
         real(kind=4), dimension(ip,kp) , intent(InOut) :: uwfxs
         real(kind=4), dimension(0:ip+1,-1:jp+1,0:kp+1) , intent(In) :: v
         real(kind=4), dimension(0:ip+1,-1:jp+1,-1:kp+1) , intent(In) :: w
-! 
-! 
+!
+!
       if(n == n1) then
         do k = 1,km
         do j = 1,jm
@@ -67,9 +67,9 @@ contains
           avesvv(i,k) = 0.0
           avesww(i,k) = 0.0
         end do
-        end do 
+        end do
       end if
-! 
+!
       if(n >= n1) then
       do k = 1,km
       do j = 1,jm
@@ -86,10 +86,10 @@ contains
         uwfx(i,j,k) = uwfx(i,j,k)+0.5*(u(i,j,k-1)+u(i,j,k)) *0.5*(w(i,j,k-1)+w(i+1,j,k-1))
       end do
       end do
-      end do  
-! 
+      end do
+!
       endif
-! 
+!
       if(n == nmax) then
       do k = 1,km
       do j = 1,jm
@@ -106,7 +106,7 @@ contains
         avesmsm(i,j,k) = avesmsm(i,j,k)/float(nmax-n1+1)
       end do
       end do
-      end do 
+      end do
       do k = 1,km
       do j = 1,jm
       do i = 1,im
@@ -127,7 +127,7 @@ contains
         uwfxs(i,k) = uwfxs(i,k)+uwfx(i,j,k)
       end do
       end do
-      end do        
+      end do
       do k = 1,km
       do i = 1,im
         avesu(i,k) = avesu(i,k)/float(jm)
@@ -139,7 +139,7 @@ contains
         uwfxs(i,k) = uwfxs(i,k)/float(jm)
       end do
       end do
-! 
+!
         do k = 1,km
         do j = 1,jm
         do i = 1,im
@@ -156,16 +156,16 @@ contains
           avesww(i,k) = sqrt(abs(avesww(i,k)-avesw(i,k)**2))
         end do
         end do
-! 
+!
 #ifndef NO_IO
-#if !defined(MPI) && !defined(GMCF)
+#ifndef MPI
         open(unit=10,file=data10,form='unformatted',status='unknown')
           write(10) n,time
           write(10) (((aveu(i,j,k),i=1,im),j=1,jm),k=1,km)
           write(10) (((avew(i,j,k),i=1,im),j=1,jm),k=1,km)
           write(10) (((avev(i,j,k),i=1,im),j=1,jm),k=1,km)
         close(unit=10)
-! 
+!
         open(unit=11,file=data11,form='unformatted',status='unknown')
           write(11) n,time
           write(11) (((aveuu(i,j,k),i=1,im),j=1,jm),k=1,km)
@@ -176,10 +176,9 @@ contains
 #endif
 #endif
       endif
-! 
+!
 
       return
       end subroutine aveflow
 
 end module module_aveflow
-

@@ -17,10 +17,10 @@ contains
         integer, intent(In) :: km
         integer, intent(In) :: n
         integer, intent(In) :: nmax
-! 
+!
 !
 #ifndef NO_IO
-#if !defined(MPI) && !defined(GMCF)
+#ifndef MPI
       if (mod(n,1000) == 0.or.n == nmax) then
        open(unit=21,file=data21,form='unformatted',status='unknown')
        write(21) (((fold(i,j,k),i=1,im),j=1,jm),k=1,km)
@@ -46,7 +46,7 @@ contains
       end do
       end do
       end do
-! 
+!
 #ifdef WV_DEBUG
     print *, 'F95 FGHSUM after adam:',sum(f)+sum(g)+sum(h)
     print *, 'F95 FSUM after adam:',sum(f)
@@ -62,4 +62,3 @@ contains
 
 
 end module module_adam
-

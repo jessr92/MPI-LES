@@ -1,39 +1,30 @@
-#ifdef GMCF
-    subroutine program_les(sys, tile, model_id)
-#else
       program main
-#endif
-        use module_init 
-        use module_grid 
-        use module_set 
-        use module_timdata 
+        use module_init
+        use module_grid
+        use module_set
+        use module_timdata
 #ifdef TIMSERIS_FIXED
         use module_timseris
 #endif
         use module_aveflow
-        use module_ifdata 
-#if IANIME == 1      
-        use module_anime 
-#endif      
+        use module_ifdata
+#if IANIME == 1
+        use module_anime
+#endif
 #ifdef _OPENCL_LES_WV
         use module_LES_combined_ocl
-#else        
-        use module_velnw 
-        use module_bondv1 
-        use module_velFG 
-#if IFBF == 1      
-        use module_feedbf 
-#endif      
-        use module_les 
-        use module_press 
-        use module_adam 
-#endif        
-        use common_sn 
-#ifdef GMCF
-    integer(8) , intent(In) :: sys
-    integer(8) , intent(In) :: tile
-    integer , intent(In) :: model_id
+#else
+        use module_velnw
+        use module_bondv1
+        use module_velFG
+#if IFBF == 1
+        use module_feedbf
 #endif
+        use module_les
+        use module_press
+        use module_adam
+#endif
+        use common_sn
         real(kind=4) :: alpha
         integer :: ianime
         integer :: ical
@@ -65,106 +56,6 @@
 #ifdef TIMINGS
         integer :: clock_rate
 #endif
-
-#ifdef GMCF
-    real(kind=4), dimension(:,:,:), allocatable :: amask1
-    real(kind=4), dimension(:,:,:), allocatable :: avel
-    real(kind=4), dimension(:,:,:), allocatable :: avep
-    real(kind=4), dimension(:,:,:), allocatable :: avesm
-    real(kind=4), dimension(:,:,:), allocatable :: avesmsm
-    real(kind=4), dimension(:,:), allocatable :: avesu
-    real(kind=4), dimension(:,:), allocatable :: avesuu
-    real(kind=4), dimension(:,:), allocatable :: avesv
-    real(kind=4), dimension(:,:), allocatable :: avesvv
-    real(kind=4), dimension(:,:), allocatable :: avesw
-    real(kind=4), dimension(:,:), allocatable :: avesww
-    real(kind=4), dimension(:,:,:), allocatable :: aveu
-    real(kind=4), dimension(:,:,:), allocatable :: aveuu
-    real(kind=4), dimension(:,:,:), allocatable :: avev
-    real(kind=4), dimension(:,:,:), allocatable :: avevv
-    real(kind=4), dimension(:,:,:), allocatable :: avew
-    real(kind=4), dimension(:,:,:), allocatable :: aveww
-    real(kind=4), dimension(:,:,:), allocatable :: bmask1
-    real(kind=4), dimension(:,:,:), allocatable :: cmask1
-    real(kind=4), dimension(:,:,:), allocatable :: cn1
-    real(kind=4), dimension(:), allocatable :: cn2l
-    real(kind=4), dimension(:), allocatable :: cn2s
-    real(kind=4), dimension(:), allocatable :: cn3l
-    real(kind=4), dimension(:), allocatable :: cn3s
-    real(kind=4), dimension(:), allocatable :: cn4l
-    real(kind=4), dimension(:), allocatable :: cn4s
-    real(kind=4), dimension(:,:,:), allocatable :: cov1
-    real(kind=4), dimension(:,:,:), allocatable :: cov2
-    real(kind=4), dimension(:,:,:), allocatable :: cov3
-    real(kind=4), dimension(:,:,:), allocatable :: cov4
-    real(kind=4), dimension(:,:,:), allocatable :: cov5
-    real(kind=4), dimension(:,:,:), allocatable :: cov6
-    real(kind=4), dimension(:,:,:), allocatable :: cov7
-    real(kind=4), dimension(:,:,:), allocatable :: cov8
-    real(kind=4), dimension(:,:,:), allocatable :: cov9
-    real(kind=4), dimension(:), allocatable :: delx1
-    real(kind=4), dimension(:,:,:), allocatable :: dfu1
-    real(kind=4), dimension(:,:,:), allocatable :: dfv1
-    real(kind=4), dimension(:,:,:), allocatable :: dfw1
-    real(kind=4), dimension(:,:,:), allocatable :: diu1
-    real(kind=4), dimension(:,:,:), allocatable :: diu2
-    real(kind=4), dimension(:,:,:), allocatable :: diu3
-    real(kind=4), dimension(:,:,:), allocatable :: diu4
-    real(kind=4), dimension(:,:,:), allocatable :: diu5
-    real(kind=4), dimension(:,:,:), allocatable :: diu6
-    real(kind=4), dimension(:,:,:), allocatable :: diu7
-    real(kind=4), dimension(:,:,:), allocatable :: diu8
-    real(kind=4), dimension(:,:,:), allocatable :: diu9
-    real(kind=4), dimension(:,:,:), allocatable :: dmask1
-    real(kind=4), dimension(:), allocatable :: dx1
-    real(kind=4), dimension(:), allocatable :: dxl
-    real(kind=4), dimension(:), allocatable :: dxs
-    real(kind=4), dimension(:), allocatable :: dy1
-    real(kind=4), dimension(:), allocatable :: dyl
-    real(kind=4), dimension(:), allocatable :: dys
-    real(kind=4), dimension(:), allocatable :: dzn
-    real(kind=4), dimension(:), allocatable :: dzs
-    real(kind=4), dimension(:,:,:), allocatable :: f
-#if ICAL == 1
-    real(kind=4), dimension(:,:,:), allocatable :: fghold
-#endif
-    real(kind=4), dimension(:,:,:), allocatable :: fold
-    real(kind=4), dimension(:,:,:), allocatable :: fx
-    real(kind=4), dimension(:,:,:), allocatable :: fy
-    real(kind=4), dimension(:,:,:), allocatable :: fz
-    real(kind=4), dimension(:,:,:), allocatable :: g
-    real(kind=4), dimension(:,:,:), allocatable :: gold
-    real(kind=4), dimension(:,:,:), allocatable :: h
-    real(kind=4), dimension(:,:,:), allocatable :: hold
-#ifndef _OPENCL_LES_WV
-    real(kind=4), dimension(:,:,:), allocatable :: fghold
-#endif
-    real(kind=4), dimension(:,:,:), allocatable :: nou1
-    real(kind=4), dimension(:,:,:), allocatable :: nou2
-    real(kind=4), dimension(:,:,:), allocatable :: nou3
-    real(kind=4), dimension(:,:,:), allocatable :: nou4
-    real(kind=4), dimension(:,:,:), allocatable :: nou5
-    real(kind=4), dimension(:,:,:), allocatable :: nou6
-    real(kind=4), dimension(:,:,:), allocatable :: nou7
-    real(kind=4), dimension(:,:,:), allocatable :: nou8
-    real(kind=4), dimension(:,:,:), allocatable :: nou9
-    real(kind=4), dimension(:,:,:), allocatable :: p
-    real(kind=4), dimension(:,:,:), allocatable :: rhs
-    real(kind=4), dimension(:,:,:), allocatable :: sm
-    real(kind=4), dimension(:,:,:), allocatable :: u
-    real(kind=4), dimension(:,:,:), allocatable :: usum
-    real(kind=4), dimension(:,:,:), allocatable :: uwfx
-    real(kind=4), dimension(:,:), allocatable :: uwfxs
-    real(kind=4), dimension(:,:,:), allocatable :: v
-    real(kind=4), dimension(:,:,:), allocatable :: vsum
-    real(kind=4), dimension(:,:,:), allocatable :: w
-    real(kind=4), dimension(:,:,:), allocatable :: wsum
-    real(kind=4), dimension(:), allocatable :: z2
-    real(kind=4), dimension(:,:), allocatable :: zbm
-#ifdef TIMINGS
-    integer(kind=4), dimension(:), allocatable :: timestamp
-#endif
-#else
     real(kind=4), dimension(0:ip+1,0:jp+1,0:kp+1)  :: amask1
     real(kind=4), dimension(ip,jp,kp)  :: avel
     real(kind=4), dimension(ip,jp,kp)  :: avep
@@ -262,212 +153,16 @@
 #ifdef TIMINGS
     integer (kind=4), dimension(0:9) :: timestamp
 #endif
-#endif
-
-#ifdef GMCF
-    allocate(amask1((ip+1)-(0)+1,(jp+1)-(0)+1,(kp+1)-(0)+1))
-    call zero3DReal4Array(amask1)
-    allocate(avel((ip)-(1)+1,(jp)-(1)+1,(kp)-(1)+1))
-    call zero3DReal4Array(avel)
-    allocate(avep((ip)-(1)+1,(jp)-(1)+1,(kp)-(1)+1))
-    call zero3DReal4Array(avep)
-    allocate(avesm((ip)-(1)+1,(jp)-(1)+1,(kp)-(1)+1))
-    call zero3DReal4Array(avesm)
-    allocate(avesmsm((ip)-(1)+1,(jp)-(1)+1,(kp)-(1)+1))
-    call zero3DReal4Array(avesmsm)
-    allocate(avesu((ip)-(1)+1,(kp)-(1)+1))
-    call zero2DReal4Array(avesu)
-    allocate(avesuu((ip)-(1)+1,(kp)-(1)+1))
-    call zero2DReal4Array(avesuu)
-    allocate(avesv((ip)-(1)+1,(kp)-(1)+1))
-    call zero2DReal4Array(avesv)
-    allocate(avesvv((ip)-(1)+1,(kp)-(1)+1))
-    call zero2DReal4Array(avesvv)
-    allocate(avesw((ip)-(1)+1,(kp)-(1)+1))
-    call zero2DReal4Array(avesw)
-    allocate(avesww((ip)-(1)+1,(kp)-(1)+1))
-    call zero2DReal4Array(avesww)
-    allocate(aveu((ip)-(1)+1,(jp)-(1)+1,(kp)-(1)+1))
-    call zero3DReal4Array(aveu)
-    allocate(aveuu((ip)-(1)+1,(jp)-(1)+1,(kp)-(1)+1))
-    call zero3DReal4Array(aveuu)
-    allocate(avev((ip)-(1)+1,(jp)-(1)+1,(kp)-(1)+1))
-    call zero3DReal4Array(avev)
-    allocate(avevv((ip)-(1)+1,(jp)-(1)+1,(kp)-(1)+1))
-    call zero3DReal4Array(avevv)
-    allocate(avew((ip)-(1)+1,(jp)-(1)+1,(kp)-(1)+1))
-    call zero3DReal4Array(avew)
-    allocate(aveww((ip)-(1)+1,(jp)-(1)+1,(kp)-(1)+1))
-    call zero3DReal4Array(aveww)
-    allocate(bmask1((ip+1)-(-1)+1,(jp+1)-(0)+1,(kp+1)-(0)+1))
-    call zero3DReal4Array(bmask1)
-    allocate(cmask1((ip+1)-(0)+1,(jp+1)-(-1)+1,(kp+1)-(0)+1))
-    call zero3DReal4Array(cmask1)
-    allocate(cn1((ip)-(1)+1,(jp)-(1)+1,(kp)-(1)+1))
-    call zero3DReal4Array(cn1)
-    allocate(cn2l((ip)-(1)+1))
-    call zero1DReal4Array(cn2l)
-    allocate(cn2s((ip)-(1)+1))
-    call zero1DReal4Array(cn2s)
-    allocate(cn3l((jp)-(1)+1))
-    call zero1DReal4Array(cn3l)
-    allocate(cn3s((jp)-(1)+1))
-    call zero1DReal4Array(cn3s)
-    allocate(cn4l((kp)-(1)+1))
-    call zero1DReal4Array(cn4l)
-    allocate(cn4s((kp)-(1)+1))
-    call zero1DReal4Array(cn4s)
-    allocate(cov1((ip+2)-(-1)+1,(jp+2)-(0)+1,(kp+2)-(0)+1))
-    call zero3DReal4Array(cov1)
-    allocate(cov2((ip+2)-(0)+1,(jp+2)-(0)+1,(kp+2)-(0)+1))
-    call zero3DReal4Array(cov2)
-    allocate(cov3((ip+2)-(0)+1,(jp+2)-(0)+1,(kp+2)-(0)+1))
-    call zero3DReal4Array(cov3)
-    allocate(cov4((ip+2)-(0)+1,(jp+2)-(0)+1,(kp+2)-(0)+1))
-    call zero3DReal4Array(cov4)
-    allocate(cov5((ip+2)-(-1)+1,(jp+2)-(0)+1,(kp+2)-(0)+1))
-    call zero3DReal4Array(cov5)
-    allocate(cov6((ip+2)-(0)+1,(jp+2)-(0)+1,(kp+2)-(0)+1))
-    call zero3DReal4Array(cov6)
-    allocate(cov7((ip+2)-(0)+1,(jp+2)-(0)+1,(kp+2)-(0)+1))
-    call zero3DReal4Array(cov7)
-    allocate(cov8((ip+2)-(0)+1,(jp+2)-(0)+1,(kp+2)-(0)+1))
-    call zero3DReal4Array(cov8)
-    allocate(cov9((ip+2)-(0)+1,(jp+2)-(0)+1,(kp+2)-(0)+1))
-    call zero3DReal4Array(cov9)
-    allocate(delx1((kp)-(1)+1))
-    call zero1DReal4Array(delx1)
-    allocate(dfu1((ip)-(0)+1,(jp)-(1)+1,(kp)-(1)+1))
-    call zero3DReal4Array(dfu1)
-    allocate(dfv1((ip)-(1)+1,(jp)-(0)+1,(kp)-(1)+1))
-    call zero3DReal4Array(dfv1)
-    allocate(dfw1((ip)-(1)+1,(jp)-(1)+1,(kp)-(1)+1))
-    call zero3DReal4Array(dfw1)
-    allocate(diu1((ip+2)-(-1)+1,(jp+2)-(0)+1,(kp+2)-(0)+1))
-    call zero3DReal4Array(diu1)
-    allocate(diu2((ip+2)-(0)+1,(jp+2)-(0)+1,(kp+2)-(0)+1))
-    call zero3DReal4Array(diu2)
-    allocate(diu3((ip+2)-(0)+1,(jp+2)-(0)+1,(kp+2)-(0)+1))
-    call zero3DReal4Array(diu3)
-    allocate(diu4((ip+2)-(0)+1,(jp+2)-(0)+1,(kp+2)-(0)+1))
-    call zero3DReal4Array(diu4)
-    allocate(diu5((ip+2)-(-1)+1,(jp+2)-(0)+1,(kp+2)-(0)+1))
-    call zero3DReal4Array(diu5)
-    allocate(diu6((ip+2)-(0)+1,(jp+2)-(0)+1,(kp+2)-(0)+1))
-    call zero3DReal4Array(diu6)
-    allocate(diu7((ip+2)-(0)+1,(jp+2)-(0)+1,(kp+2)-(0)+1))
-    call zero3DReal4Array(diu7)
-    allocate(diu8((ip+2)-(0)+1,(jp+2)-(0)+1,(kp+2)-(0)+1))
-    call zero3DReal4Array(diu8)
-    allocate(diu9((ip+2)-(0)+1,(jp+2)-(0)+1,(kp+2)-(0)+1))
-    call zero3DReal4Array(diu9)
-    allocate(dmask1((ip+1)-(0)+1,(jp+1)-(0)+1,(kp+1)-(0)+1))
-    call zero3DReal4Array(dmask1)
-    allocate(dx1((ip+1)-(-1)+1))
-    call zero1DReal4Array(dx1)
-    allocate(dxl((ip)-(0)+1))
-    call zero1DReal4Array(dxl)
-    allocate(dxs((ip)-(0)+1))
-    call zero1DReal4Array(dxs)
-    allocate(dy1((jp+1)-(0)+1))
-    call zero1DReal4Array(dy1)
-    allocate(dyl((jp)-(0)+1))
-    call zero1DReal4Array(dyl)
-    allocate(dys((jp)-(0)+1))
-    call zero1DReal4Array(dys)
-    allocate(dzn((kp+2)-(-1)+1))
-    call zero1DReal4Array(dzn)
-    allocate(dzs((kp+2)-(-1)+1))
-    call zero1DReal4Array(dzs)
-    allocate(f((ip)-(0)+1,(jp)-(0)+1,(kp)-(0)+1))
-    call zero3DReal4Array(f)
-#if ICAL==1
-    allocate(fghold((ip)-(1)+1,(jp)-(1)+1,(kp)-(1)+1))
-    call zero3DReal4Array(fghold)
-#endif
-    allocate(fold((ip)-(1)+1,(jp)-(1)+1,(kp)-(1)+1))
-    call zero3DReal4Array(fold)
-    allocate(fx((ip)-(0)+1,(jp)-(0)+1,(kp)-(0)+1))
-    call zero3DReal4Array(fx)
-    allocate(fy((ip)-(0)+1,(jp)-(0)+1,(kp)-(0)+1))
-    call zero3DReal4Array(fy)
-    allocate(fz((ip)-(0)+1,(jp)-(0)+1,(kp)-(0)+1))
-    call zero3DReal4Array(fz)
-    allocate(g((ip)-(0)+1,(jp)-(0)+1,(kp)-(0)+1))
-    call zero3DReal4Array(g)
-    allocate(gold((ip)-(1)+1,(jp)-(1)+1,(kp)-(1)+1))
-    call zero3DReal4Array(gold)
-    allocate(h((ip)-(0)+1,(jp)-(0)+1,(kp)-(0)+1))
-    call zero3DReal4Array(h)
-    allocate(hold((ip)-(1)+1,(jp)-(1)+1,(kp)-(1)+1))
-    call zero3DReal4Array(hold)
-#ifndef _OPENCL_LES_WV
-    allocate(fghold((ip)-(1)+1,(jp)-(1)+1,(kp)-(1)+1))
-    call zero3DReal4Array(fghold)
-#endif
-    allocate(nou1((ip+2)-(-1)+1,(jp+2)-(0)+1,(kp+2)-(0)+1))
-    call zero3DReal4Array(nou1)
-    allocate(nou2((ip+2)-(0)+1,(jp+2)-(0)+1,(kp+2)-(0)+1))
-    call zero3DReal4Array(nou2)
-    allocate(nou3((ip+2)-(0)+1,(jp+2)-(0)+1,(kp+2)-(0)+1))
-    call zero3DReal4Array(nou3)
-    allocate(nou4((ip+2)-(0)+1,(jp+2)-(0)+1,(kp+2)-(0)+1))
-    call zero3DReal4Array(nou4)
-    allocate(nou5((ip+2)-(-1)+1,(jp+2)-(0)+1,(kp+2)-(0)+1))
-    call zero3DReal4Array(nou5)
-    allocate(nou6((ip+2)-(0)+1,(jp+2)-(0)+1,(kp+2)-(0)+1))
-    call zero3DReal4Array(nou6)
-    allocate(nou7((ip+2)-(0)+1,(jp+2)-(0)+1,(kp+2)-(0)+1))
-    call zero3DReal4Array(nou7)
-    allocate(nou8((ip+2)-(0)+1,(jp+2)-(0)+1,(kp+2)-(0)+1))
-    call zero3DReal4Array(nou8)
-    allocate(nou9((ip+2)-(0)+1,(jp+2)-(0)+1,(kp+2)-(0)+1))
-    call zero3DReal4Array(nou9)
-    allocate(p((ip+2)-(0)+1,(jp+2)-(0)+1,(kp+1)-(0)+1))
-    call zero3DReal4Array(p)
-    allocate(rhs((ip+1)-(0)+1,(jp+1)-(0)+1,(kp+1)-(0)+1))
-    call zero3DReal4Array(rhs)
-    allocate(sm((ip+1)-(-1)+1,(jp+1)-(-1)+1,(kp+1)-(0)+1))
-    call zero3DReal4Array(sm)
-    allocate(u((ip+1)-(0)+1,(jp+1)-(-1)+1,(kp+1)-(0)+1))
-    call zero3DReal4Array(u)
-    allocate(usum((ip)-(0)+1,(jp)-(0)+1,(kp)-(0)+1))
-    call zero3DReal4Array(usum)
-    allocate(uwfx((ip)-(1)+1,(jp)-(1)+1,(kp)-(1)+1))
-    call zero3DReal4Array(uwfx)
-    allocate(uwfxs((ip)-(1)+1,(kp)-(1)+1))
-    call zero2DReal4Array(uwfxs)
-    allocate(v((ip+1)-(0)+1,(jp+1)-(-1)+1,(kp+1)-(0)+1))
-    call zero3DReal4Array(v)
-    allocate(vsum((ip)-(0)+1,(jp)-(0)+1,(kp)-(0)+1))
-    call zero3DReal4Array(vsum)
-    allocate(w((ip+1)-(0)+1,(jp+1)-(-1)+1,(kp+1)-(-1)+1))
-    call zero3DReal4Array(w)
-    allocate(wsum((ip)-(0)+1,(jp)-(0)+1,(kp)-(0)+1))
-    call zero3DReal4Array(wsum)
-    allocate(z2((kp+2)-(1)+1))
-    call zero1DReal4Array(z2)
-    allocate(zbm((ipmax+1)-(-1)+1,(jpmax+1)-(-1)+1))
-    call zero2DReal4Array(zbm)
-#ifdef TIMINGS
-    allocate(timestamp((9)-(0)+1))
-    !call zero1DReal4Array(timestamp)
-#endif
-#endif
 
 ! -----------------------------------------------------------------------
 !
-#ifdef GMCF
-        print*, 'Hello from model ', model_id
-        call initialise_gmcf(sys, tile, model_id, procPerRow, procPerCol)
-#endif
 #ifdef MPI
       call initialise_mpi()
       if (mpi_size .ne. procPerRow * procPerCol) then
           print*, 'Needed ', (procPerRow * procPerCol), ' processes, got ', mpi_size
           call MPI_Abort(communicator, 1, ierror)
       end if
-      call setupCartesianVirtualTopology(dimensions, dimensionSizes, & 
+      call setupCartesianVirtualTopology(dimensions, dimensionSizes, &
                                          periodicDimensions, coordinates, &
                                          neighbours, reorder)
 
@@ -570,7 +265,7 @@
         end do
 #endif
 
-#endif		
+#endif
 ! -------data output ---------------------c
 ! WV: This is clearly broken, as the dimensions for u/v/w are 150x150x90
 #ifdef TIMSERIS_FIXED
@@ -589,24 +284,9 @@
 #ifdef TIMINGS
     call system_clock(timestamp(9))
     print *,"Total time:" ,(timestamp(9)-timestamp(8))/real(clock_rate),"s for ",nmax-n0,"iterations"
-#ifdef GMCF
-    call flush(6)
-    call sleep(5)
-    call flush(6)
-#endif
 #endif
 
-#ifdef GMCF_API
-      call finalise_gmcf(model_id)
-#else
 #ifdef MPI
       call finalise_mpi()
 #endif
-#endif
-#ifdef GMCF
-end subroutine program_les
-#else
       end program
-#endif
-
-

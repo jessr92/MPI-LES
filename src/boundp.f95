@@ -1,9 +1,5 @@
 module module_boundp
 
-! GR: Ignore boundp for halo exchange. This would kill performance!
-! GR: Actually, we need this for correctness (UrbanFlow = NaN... is due to
-! non-convergence).
-
 contains
 
 subroutine boundp2(jm,im,p,km)
@@ -14,7 +10,7 @@ subroutine boundp2(jm,im,p,km)
     integer, intent(In) :: km
     real(kind=4), dimension(0:ip+2,0:jp+2,0:kp+1) , intent(InOut) :: p
     integer :: i, j
-! 
+!
 ! --computational boundary(neumann condition)
     do j = 0,jm+1
         do i = 0,im+1
@@ -22,13 +18,9 @@ subroutine boundp2(jm,im,p,km)
             p(i,j,km+1) = p(i,j,km)
         end do
     end do
-#if defined(MPI) || defined(GMCF)
+#ifdef MPI
 ! --halo exchanges
     call exchangeRealHalos(p, procPerRow, neighbours, 1, 2, 1, 2)
-#else
-#ifdef ESTIMATE_CORNERS
-    call calculateCornersNonMPI(p, 1, 2, 1, 2)
-#endif
 #endif
 end subroutine boundp2
 
@@ -39,36 +31,36 @@ subroutine boundp1(km,jm,p,im)
     integer, intent(In) :: jm
     integer, intent(In) :: km
     real(kind=4), dimension(0:ip+2,0:jp+2,0:kp+1) , intent(InOut) :: p
-#if !defined(MPI) && !defined(GMCF) || (PROC_PER_ROW==1)
+#if !defined(MPI) || (PROC_PER_ROW==1)
     integer :: i, j, k
 #else
     integer :: j, k
 #endif
-! 
+!
 ! --computational boundary(neumann condition)
-#if defined(MPI) || defined(GMCF)
+#ifdef MPI
     if (isTopRow(procPerRow) .or. isBottomRow(procPerRow)) then
 #endif
         do k = 0,km+1
             do j = 0,jm+1
-#if defined(MPI) || defined(GMCF)
+#ifdef MPI
                 if (isTopRow(procPerRow)) then
 #endif
                     p(   0,j,k) = p(1 ,j,k)
-#if defined(MPI) || defined(GMCF)
+#ifdef MPI
                 else
 #endif
                     p(im+1,j,k) = p(im,j,k)
-#if defined(MPI) || defined(GMCF)
+#ifdef MPI
                 end if
 #endif
             end do
         end do
-#if defined(MPI) || defined(GMCF)
+#ifdef MPI
     end if
 #endif
 ! --side flow exchanges
-#if !defined(MPI) && !defined(GMCF) || (PROC_PER_ROW==1)
+#if !defined(MPI) || (PROC_PER_ROW==1)
     do k = 0,km+1
         do i = 0,im+1
             p(i,   0,k) = p(i,jm,k) ! right to left
@@ -79,15 +71,10 @@ subroutine boundp1(km,jm,p,im)
     call sideflowRightLeft(p, procPerRow, jp+1, 1, 0, 1, 0, 0)
     call sideflowLeftRight(p, procPerRow, 2, jp+2, 0, 1, 0, 0)
 #endif
-#if defined(MPI) || defined(GMCF)
+#ifdef MPI
 ! --halo exchanges
     call exchangeRealHalos(p, procPerRow, neighbours, 1, 2, 1, 2)
-#else
-#ifdef ESTIMATE_CORNERS
-    call calculateCornersNonMPI(p, 1, 2, 1, 2)
-#endif
 #endif
 end subroutine boundp1
 
 end module module_boundp
-
