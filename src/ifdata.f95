@@ -1,12 +1,12 @@
 module module_ifdata
 
-      use module_bondv1 
+      use module_bondv1
       use module_velFG
-      use module_les 
-      use module_boundp 
-#if IFBF == 1        
-      use module_feedbfm 
-      use module_feedbf 
+      use module_les
+      use module_boundp
+#if IFBF == 1
+      use module_feedbfm
+      use module_feedbf
 #endif
 #if IADAM == 1
       use module_adam
@@ -17,8 +17,8 @@ contains
               diu1,diu2,diu3,diu4,diu5,diu6,diu7,diu8,diu9,  &
               f,g,h, &
               nou1,nou2,nou3,nou4,nou5,nou6,nou7,nou8,nou9 &
-              )  
-      use common_sn       
+              )
+      use common_sn
         real(kind=4), dimension(-1:ip+2,0:jp+2,0:kp+2) , intent(Out) :: cov1
         real(kind=4), dimension(0:ip+2,0:jp+2,0:kp+2) , intent(Out) :: cov2
         real(kind=4), dimension(0:ip+2,0:jp+2,0:kp+2) , intent(Out) :: cov3
@@ -64,7 +64,7 @@ contains
               nou5(i,j,k) = 0.0
           end do
           end do
-          end do 
+          end do
           do k = 0,kp+1
           do j = 0,jp+2
           do i = 0,ip+2
@@ -91,28 +91,28 @@ contains
               nou9(i,j,k) = 0.0
           end do
           end do
-          end do 
+          end do
           do k = 1,kp
           do j = 1,jp
           do i = 0,ip
               dfu1(i,j,k) = 0.0
           end do
           end do
-          end do 
+          end do
           do k = 1,kp
           do j = 0,jp
           do i = 1,ip
               dfv1(i,j,k) = 0.0
           end do
           end do
-          end do 
+          end do
           do k = 1,kp
           do j = 1,jp
           do i = 1,ip
               dfw1(i,j,k) = 0.0
           end do
           end do
-          end do 
+          end do
 
           do k = 0,kp
           do j = 0,jp
@@ -122,7 +122,7 @@ contains
               h(i,j,k) = 0.0
           end do
           end do
-          end do 
+          end do
 
       end subroutine
 
@@ -217,13 +217,13 @@ contains
             print *, "im,km,km is different from ip,jp,kp, aborting!"
             call exit(-1)
     end if
-!        
-! 
-! 
+!
+!
+!
 !      ical =  0;initial start(grid write)
 !           =  1;continuous data read,start
 !           = 10;continuous data write
-!           
+!
 #if ICAL == 1
 !        if(ical == 1) then
         open(unit=30,file=data30,form='unformatted',status='unknown')
@@ -234,7 +234,7 @@ contains
         read(30) (((p(i,j,k),i=1,im),j=1,jm),k=1,km)
         read(30) (((usum(i,j,k),i=1,im),j=1,jm),k=1,km)
         read(30) (((vsum(i,j,k),i=1,im),j=1,jm),k=1,km)
-        read(30) (((wsum(i,j,k),i=1,im),j=1,jm),k=1,km) 
+        read(30) (((wsum(i,j,k),i=1,im),j=1,jm),k=1,km)
         close(30)
 
         open(unit=31,file=data31,form='unformatted',status='unknown')
@@ -263,7 +263,7 @@ contains
         call velfg(km,jm,im,dx1,cov1,cov2,cov3,dfu1,diu1,diu2,dy1,diu3,dzn,vn,f,cov4,cov5,cov6,dfv1, &
       diu4,diu5,diu6,g,cov7,cov8,cov9,dfw1,diu7,diu8,diu9,dzs,h,nou1,u,nou5,v,nou9,w,nou2,nou3, &
       nou4,nou6,nou7,nou8)
-#if IFBF == 1        
+#if IFBF == 1
 !        if(ifbf == 1) then
         call feedbf(km,jm,im,usum,u,bmask1,vsum,v,cmask1,wsum,w,dmask1,alpha,dt,beta,fx,fy,fz,f,g, &
       h)
@@ -282,8 +282,7 @@ contains
           call adam(n1,n2,data21dummy,fold,im,jm,km,gold,hold,fghold,f,g,h)
 ! WV        end if
 #endif
-! 
+!
       end subroutine ifdata
 
 end module module_ifdata
-

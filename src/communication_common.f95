@@ -8,4 +8,3 @@ integer, parameter :: topLeftTag = 11, topRightTag = 12, bottomLeftTag = 13, bot
 integer, parameter :: globalSumTag = 15, globalMaxTag = 16, globalMinTag = 17
 integer, parameter :: leftNeighbour = 1, rightNeighbour = 2, topNeighbour = 3, bottomNeighbour = 4
 end module
-

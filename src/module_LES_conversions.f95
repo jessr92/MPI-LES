@@ -5,7 +5,7 @@ module module_LES_conversions
         real(kind=4), dimension(0:ip+1,-1:jp+1,0:kp+1)  :: u
         real(kind=4), dimension(0:ip+1,-1:jp+1,0:kp+1)  :: v
         real(kind=4), dimension(0:ip+1,-1:jp+1,-1:kp+1)  :: w
-        real(kind=4), dimension(0:3,0:ip+1,-1:jp+1,-1:kp+1)  :: uvw        
+        real(kind=4), dimension(0:3,0:ip+1,-1:jp+1,-1:kp+1)  :: uvw
         integer :: ii,jj,kk
         do jj = -1,jp+1
             do ii = 0,ip+1
@@ -53,8 +53,8 @@ module module_LES_conversions
                 end do
             end do
         end do
-    end subroutine convert_to_fgh_old   
-  
+    end subroutine convert_to_fgh_old
+
     subroutine convert_to_9vec(cov1,cov2,cov3,cov4,cov5,cov6,cov7,cov8,cov9,cov)
         use params_common_sn
         real(kind=4), dimension(-1:ip+2,0:jp+2,0:kp+2)  :: cov1,cov5
@@ -80,7 +80,7 @@ module module_LES_conversions
         end do
     end subroutine convert_to_9vec
 
- 
+
     subroutine convert_from_9vec(cov,cov1,cov2,cov3,cov4,cov5,cov6,cov7,cov8,cov9)
         use params_common_sn
         real(kind=4), dimension(-1:ip+2,0:jp+2,0:kp+2)  :: cov1,cov5
@@ -90,28 +90,28 @@ module module_LES_conversions
         do kk = 0,kp+2
             do jj = 0,jp+2
                 do ii = 0,ip+2
-                     cov1(ii,jj,kk)= cov(1,ii,jj,kk)  
-                     cov2(ii,jj,kk)= cov(2,ii,jj,kk)  
-                     cov3(ii,jj,kk)= cov(3,ii,jj,kk)  
-                     cov4(ii,jj,kk)= cov(4,ii,jj,kk)  
-                     cov5(ii,jj,kk)= cov(5,ii,jj,kk)  
-                     cov6(ii,jj,kk)= cov(6,ii,jj,kk)  
-                     cov7(ii,jj,kk)= cov(7,ii,jj,kk)  
-                     cov8(ii,jj,kk)= cov(8,ii,jj,kk)  
-                     cov9(ii,jj,kk)= cov(9,ii,jj,kk)  
+                     cov1(ii,jj,kk)= cov(1,ii,jj,kk)
+                     cov2(ii,jj,kk)= cov(2,ii,jj,kk)
+                     cov3(ii,jj,kk)= cov(3,ii,jj,kk)
+                     cov4(ii,jj,kk)= cov(4,ii,jj,kk)
+                     cov5(ii,jj,kk)= cov(5,ii,jj,kk)
+                     cov6(ii,jj,kk)= cov(6,ii,jj,kk)
+                     cov7(ii,jj,kk)= cov(7,ii,jj,kk)
+                     cov8(ii,jj,kk)= cov(8,ii,jj,kk)
+                     cov9(ii,jj,kk)= cov(9,ii,jj,kk)
                 end do
-                 cov1(-1,jj,kk)= cov(1,-1,jj,kk)  
-                 cov5(-1,jj,kk)= cov(5,-1,jj,kk)  
+                 cov1(-1,jj,kk)= cov(1,-1,jj,kk)
+                 cov5(-1,jj,kk)= cov(5,-1,jj,kk)
             end do
         end do
     end subroutine convert_from_9vec
-    
+
     subroutine convert_to_bcdmask1(bmask1,cmask1,dmask1,mask1)
         use params_common_sn
         real(kind=4), dimension(-1:ip+1,0:jp+1,0:kp+1)  :: bmask1
         real(kind=4), dimension(0:ip+1,-1:jp+1,0:kp+1)  :: cmask1
         real(kind=4), dimension(0:ip+1,0:jp+1,0:kp+1)  :: dmask1
-       
+
         real(kind=4), dimension(0:3,-1:ip+1,-1:jp+1,0:kp+1)  :: mask1
         integer :: ii,jj,kk
         do kk = 0,kp+1
@@ -141,7 +141,7 @@ module module_LES_conversions
         real(kind=4), dimension(-1:ip+1,0:jp+1,0:kp+1)  :: bmask1
         real(kind=4), dimension(0:ip+1,-1:jp+1,0:kp+1)  :: cmask1
         real(kind=4), dimension(0:ip+1,0:jp+1,0:kp+1)  :: dmask1
-       
+
         real(kind=4), dimension(0:3,-1:ip+1,-1:jp+1,0:kp+1)  :: mask1
         integer :: ii,jj,kk
         do kk = 0,kp+1
@@ -191,7 +191,7 @@ module module_LES_conversions
         real(kind=4), dimension(    0:ip+1,-1:jp+1, 0:kp+1)  :: u
         real(kind=4), dimension(    0:ip+1,-1:jp+1, 0:kp+1)  :: v
         real(kind=4), dimension(    0:ip+1,-1:jp+1,-1:kp+1)  :: w
-        real(kind=4), dimension(0:3,0:ip+1,-1:jp+1,-1:kp+1)  :: uvw        
+        real(kind=4), dimension(0:3,0:ip+1,-1:jp+1,-1:kp+1)  :: uvw
         integer :: ii,jj,kk
         do jj = -1,jp+1
             do ii = 0,ip+1
@@ -215,9 +215,9 @@ module module_LES_conversions
         do ii = 0,ip
             do jj = 0,jp
                 do kk = 0,kp
-                    f(ii,jj,kk) =    fgh(0,ii,jj,kk) 
-                    g(ii,jj,kk) =    fgh(1,ii,jj,kk) 
-                    h(ii,jj,kk) =    fgh(2,ii,jj,kk) 
+                    f(ii,jj,kk) =    fgh(0,ii,jj,kk)
+                    g(ii,jj,kk) =    fgh(1,ii,jj,kk)
+                    h(ii,jj,kk) =    fgh(2,ii,jj,kk)
                 end do
             end do
         end do
@@ -232,14 +232,13 @@ module module_LES_conversions
             do jj = 1,jp
                 do kk = 1,kp
 !                print *,ii,jj,kk
-                    fold(ii,jj,kk) = fgh_old(0,ii,jj,kk) 
-                    gold(ii,jj,kk) = fgh_old(1,ii,jj,kk) 
-                    hold(ii,jj,kk) = fgh_old(2,ii,jj,kk) 
-                    !fghold(ii,jj,kk) = fgh_old(3,ii,jj,kk) 
+                    fold(ii,jj,kk) = fgh_old(0,ii,jj,kk)
+                    gold(ii,jj,kk) = fgh_old(1,ii,jj,kk)
+                    hold(ii,jj,kk) = fgh_old(2,ii,jj,kk)
+                    !fghold(ii,jj,kk) = fgh_old(3,ii,jj,kk)
                end do
             end do
         end do
     end subroutine convert_from_fgh_old
 
 end module module_LES_conversions
-

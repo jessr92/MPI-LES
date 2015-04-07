@@ -31,8 +31,8 @@ contains
         integer, intent(Out) :: nmax
         real(kind=4), intent(Out) :: ro
         real(kind=4), intent(Out) :: vn
-! 
-! 
+!
+!
       data10 = './data/data10'
       data11 = './data/data11'
       data20 = './data/data20'
@@ -54,7 +54,7 @@ contains
 #if IFBF == 1
 ! --if
       ifbf = 1
-#else      
+#else
 ! --if
       ifbf = 0
 #endif
@@ -80,7 +80,7 @@ contains
 ! --IBM parameter set (Feedback force by Goldstein)
       alpha = -10.
       beta = -1.
-! -----check IBM parameter----   
+! -----check IBM parameter----
       if(((-beta-(beta*beta-2.*alpha)**(0.5))/alpha) < dt) then
       write(6,*) 'CHECK parameter alpha beta of IBM method'
       write(6,*) 'IBM parameter, dt=' ,((-beta-(beta*beta-2.*alpha)**(0.5))/alpha),dt
@@ -91,4 +91,3 @@ contains
       end subroutine set
 
 end module module_set
-

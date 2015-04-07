@@ -42,9 +42,9 @@ contains
         real(kind=4), dimension(0:ip+1,-1:jp+1,0:kp+1) , intent(In) :: u
         real(kind=4), dimension(0:ip+1,-1:jp+1,0:kp+1) , intent(In) :: v
         real(kind=4), dimension(0:ip+1,-1:jp+1,-1:kp+1) , intent(In) :: w
-! 
+!
       integer, parameter  :: u0 = 0
-! 
+!
       do k = 1,km
       do j = 1,jm
       do i = 1,im
@@ -54,14 +54,14 @@ contains
         diu5(i,j,k) = (-v(i,j-1,k)+v(i,j,k))/dy1(j)
         nou9(i,j,k) = (w(i,j,k-1)+w(i,j,k))/2.
         diu9(i,j,k) = (-w(i,j,k-1)+w(i,j,k))/dzn(k)
-! 
+!
         cov1(i,j,k) = nou1(i,j,k)*diu1(i,j,k)
         cov5(i,j,k) = nou5(i,j,k)*diu5(i,j,k)
         cov9(i,j,k) = nou9(i,j,k)*diu9(i,j,k)
       end do
       end do
       end do
-! 
+!
       do k = 1,km
       do j = 1,jm
       do i = 1,im
@@ -71,7 +71,7 @@ contains
       end do
       end do
       end do
-! 
+!
       do k = 1,km+1
       do j = 1,jm
       do i = 1,im
@@ -81,7 +81,7 @@ contains
       end do
       end do
       end do
-! 
+!
       do k = 1,km
       do j = 1,jm
       do i = 1,im
@@ -91,7 +91,7 @@ contains
       end do
       end do
       end do
-! 
+!
       do k = 1,km+1
       do j = 1,jm
       do i = 1,im
@@ -101,7 +101,7 @@ contains
       end do
       end do
       end do
-! 
+!
       do k = 1,km-1
       do j = 1,jm
       do i = 1,im
@@ -111,7 +111,7 @@ contains
       end do
       end do
       end do
-! 
+!
       do k = 1,km-1
       do j = 1,jm
       do i = 1,im
@@ -173,7 +173,7 @@ contains
         cov8(i,jm+1,k) = cov8(i,1,k)
       end do
       end do
-      
+
 ! --les
       do k = 1,km+1
       do j = 1,jm+1
@@ -187,7 +187,7 @@ contains
         diu6(i,0,k) = diu6(i,jm,k)
       end do
       end do
-! 
+!
       return
       end
 
@@ -195,4 +195,3 @@ contains
 
 
 end module module_vel2_init
-

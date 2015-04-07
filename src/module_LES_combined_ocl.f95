@@ -57,7 +57,7 @@ contains
         real(kind=4), dimension(-1:ip+1), intent(In)  :: dx1
         real(kind=4), dimension(0:jp+1), intent(In)  :: dy1
         real(kind=4), dimension(-1:kp+2), intent(In)  :: dzn
-        real(kind=4), dimension(kp+2)  :: z2        
+        real(kind=4), dimension(kp+2)  :: z2
         real(kind=4), intent(In) :: dt
         integer, intent(In) :: im
         integer, intent(In) :: jm
@@ -79,7 +79,7 @@ contains
         real(kind=4), dimension(256) :: val_ptr
         integer, dimension(256) :: n_ptr
         integer, dimension(256) :: state_ptr
-        
+
         ! OpenCL-specific declarations
         integer :: initialise_LES_kernel_nunits, initialise_LES_kernel_nthreads, initialise_LES_kernel_globalrange, initialise_LES_kernel_localrange
         integer :: init_initialise_LES_kernel_local
@@ -88,7 +88,7 @@ contains
         character(len=*), parameter :: kstr="LES_combined_kernel_mono"
         ! character(len=*), parameter :: koptsstr=""
         !This is a hook to insert the actual buffer declarations!
-        
+
         ! OpenCL buffer declarations
         integer(8) :: cn1_buf
         integer(8) :: cn2l_buf
@@ -149,7 +149,7 @@ contains
         integer, dimension(1):: state_ptr_sz
     integer :: init_ocl_local
     init_ocl_local = 0
-        
+
         ! Convert to new format
         call convert_to_uvw(u,v,w,uvw)
         call convert_to_fgh(usum,vsum,wsum,uvwsum)
@@ -163,20 +163,20 @@ contains
         p_scratch(1,:,:,:) = p(:,:,:)
         chunks_num=0.0
         chunks_denom=0.0
-        
-        if ( init_ocl_local /= 1 ) then 
+
+        if ( init_ocl_local /= 1 ) then
           init_initialise_LES_kernel_local = 1
-        if ( init_initialise_LES_kernel /= 1 ) then 
+        if ( init_initialise_LES_kernel /= 1 ) then
           init_initialise_LES_kernel = 1
         !  call oclInitOpts(srcstr,kstr,koptsstr)
           call oclInit(srcstr,kstr)
-        
+
           call oclGetMaxComputeUnits(initialise_LES_kernel_nunits)
           call oclGetNThreadsHint(initialise_LES_kernel_nthreads)
-        
+
         !  print *, "Compute units:",initialise_LES_kernel_nunits," Threads:",initialise_LES_kernel_nthreads
         end if
-        
+
         ! OpenCL buffer sizes
         cn1_sz = shape(cn1)
         cn2l_sz = shape(cn2l)
@@ -206,7 +206,7 @@ contains
         val_ptr_sz = shape(val_ptr)
         n_ptr_sz = shape(n_ptr)
         state_ptr_sz = shape(state_ptr)
-        
+
         ! Create OpenCL buffers
         call oclMake3DFloatArrayReadBuffer(cn1_buf,cn1_sz ,cn1)
         call oclMake1DFloatArrayReadBuffer(cn2l_buf,cn2l_sz ,cn2l)
@@ -236,7 +236,7 @@ contains
         call oclMake1DFloatArrayReadWriteBuffer(val_ptr_buf,val_ptr_sz ,val_ptr)
         call oclMake1DIntArrayReadWriteBuffer(n_ptr_buf,n_ptr_sz ,n_ptr)
         call oclMake1DIntArrayReadWriteBuffer(state_ptr_buf,state_ptr_sz ,state_ptr)
-        
+
         ! Set OpenCL argument order
         call oclSetFloatArrayArg(0, p_scratch_buf )
         call oclSetFloatArrayArg(1, uvw_buf )
@@ -270,15 +270,15 @@ contains
         call oclSetIntConstArg(29, im )
         call oclSetIntConstArg(30, jm )
         call oclSetIntConstArg(31, km )
-        
+
         end if
-        
+
         initialise_LES_kernel_globalrange = 1
         initialise_LES_kernel_localrange = 1
         if (initialise_LES_kernel_localrange == 0) then
           call padRange(initialise_LES_kernel_globalrange,initialise_LES_kernel_nunits*initialise_LES_kernel_nthreads)
         end if
-        
+
         ! Copy all arrays required for the full run
         call oclWrite3DFloatArrayBuffer(cn1_buf,cn1_sz,cn1)
         call oclWrite1DFloatArrayBuffer(cn2l_buf,cn2l_sz,cn2l)
@@ -308,10 +308,10 @@ contains
         call oclWrite1DFloatArrayBuffer(val_ptr_buf,val_ptr_sz,val_ptr)
         call oclWrite1DIntArrayBuffer(n_ptr_buf,n_ptr_sz,n_ptr)
         call oclWrite1DIntArrayBuffer(state_ptr_buf,state_ptr_sz,state_ptr)
-        
+
         ! call LES_combined(p_scratch, uvw, uvwsum, fgh, fgh_old, rhs, mask1, diu, sm,            dxs, dys, dzs, dx1, dy1, dzn, z2, cn1, cn2l, cn2s, cn3l, cn3s, cn4l, cn4s,            val_ptr, chunks_num, chunks_denom, n_ptr, state_ptr, dt, im, jm, km             )
         call runOcl(initialise_LES_kernel_globalrange,initialise_LES_kernel_localrange)
-        
+
         ! Read back Read and ReadWrite arrays
         call oclRead4DFloatArrayBuffer(uvw_buf,uvw_sz,uvw)
         call oclRead4DFloatArrayBuffer(uvwsum_buf,uvwsum_sz,uvwsum)
@@ -324,7 +324,7 @@ contains
         call oclRead1DFloatArrayBuffer(val_ptr_buf,val_ptr_sz,val_ptr)
         call oclRead1DIntArrayBuffer(n_ptr_buf,n_ptr_sz,n_ptr)
         call oclRead1DIntArrayBuffer(state_ptr_buf,state_ptr_sz,state_ptr)
-        
+
         ! Following buffers are used in the loop, assign to module-level buffer array for convenience
         oclBuffers(1) = p_scratch_buf ! BOUNDP
         oclBuffers(2) = uvw_buf ! BOUNDP
@@ -338,7 +338,7 @@ contains
         oclBuffers(10) = state_ptr_buf ! ALL
         oclNunits = initialise_LES_kernel_nunits
         oclNthreadsHint = initialise_LES_kernel_nthreads
-    end subroutine initialise_LES_kernel 
+    end subroutine initialise_LES_kernel
     ! --------------------------------------------------------------------------------
     ! --------------------------------------------------------------------------------
 
@@ -356,7 +356,7 @@ contains
 !        integer, intent(In) :: jm
 !        integer, intent(In) :: km
         integer, intent(In) :: n, nmax
-        
+
         ! -----------------------------------------------------------------------
         ! arrays for OpenCL kernels
 !        real(kind=4), dimension(0:ip+2,0:jp+2,0:kp+1), intent(In)  :: p
@@ -390,7 +390,7 @@ contains
         real(kind=4), dimension(256) :: chunks_num, chunks_denom
         integer, dimension(256) :: n_ptr
         integer, dimension(256) :: state_ptr
-        
+
         integer(8) :: p_buf
         integer(8) :: uvw_buf
         integer(8) :: uvwsum_buf
@@ -413,7 +413,7 @@ contains
         foldo=0
         goldo=0
         holdo=0
-        p_buf = oclBuffers(1) 
+        p_buf = oclBuffers(1)
         uvw_buf = oclBuffers(2)
         uvwsum_buf = oclBuffers(3)
         fgh_buf = oclBuffers(4)
@@ -572,7 +572,7 @@ contains
                 end select
             end do ! states loop
         end subroutine run_LES_kernel
-     
+
         ! --------------------------------------------------------------------------------
         ! --------------------------------------------------------------------------------
         ! Auxiliary subroutines for file I/O
@@ -630,5 +630,5 @@ contains
             write(21) (((hold(i,j,k),i=1,im),j=1,jm),k=1,km)
             close(unit=21)
         end subroutine write_fgh_old_to_file
-    
+
     end module module_LES_combined_ocl

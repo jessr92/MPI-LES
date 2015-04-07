@@ -51,8 +51,8 @@ contains
         real(kind=4), dimension(0:ip+1,-1:jp+1,0:kp+1) , intent(In) :: v
         real(kind=4), intent(In) :: vn
         real(kind=4), dimension(0:ip+1,-1:jp+1,-1:kp+1) , intent(In) :: w
-! 
-! 
+!
+!
       call vel2(km,jm,im,nou1,u,diu1,dx1,nou5,v,diu5,dy1,nou9,w,diu9,dzn,cov1,cov5,cov9,nou2,diu2, &
            cov2,nou3,diu3,dzs,cov3,nou4,diu4,cov4,nou6,diu6,cov6,nou7,diu7,cov7,nou8,diu8,cov8)
 ! --u velocity
@@ -86,7 +86,7 @@ contains
       end do
       end do
       end do
-! 
+!
 ! =======================================
 ! --w velocity
       do k = 1,km-1
@@ -103,7 +103,7 @@ contains
       end do
       end do
       end do
-!                                          
+!
 ! =======================================
 #ifdef WV_DEBUG
     print *, 'F95 FGHSUM after velfg:',sum(f)+sum(g)+sum(h)
@@ -119,4 +119,3 @@ contains
       end subroutine velFG
 
 end module module_velFG
-

@@ -30,7 +30,7 @@ contains
         real(kind=4), dimension(0:ip+1,-1:jp+1,-1:kp+1) , intent(Out) :: w
         real(kind=4), dimension(kp+2) , intent(In) :: z2
         real(kind=4), dimension(-1:ipmax+1,-1:jpmax+1) , intent(InOut) :: zbm
-! 
+!
 ! WV: The original boundary was 0,km;0,jm;0,im. This does not init the boundary values,so I changed it to the dimensions of u,v,w,p
 !      do k = 0,km
 !      do j = 0,jm
@@ -58,7 +58,7 @@ contains
         v(i,j,k) = 0.0
       end do
       end do
-      end do 
+      end do
 
       do k = -1,kp+1
       do j = -1,jp+1
@@ -75,9 +75,9 @@ contains
 #endif
 !print *, 'Parameter settings for solving Poisson equation'
 ! =====================================================
-! 
+!
 !      Parameter settings for solving Poisson equation
-! 
+!
 ! =====================================================
       do i = 1,im
       cn2s(i) = 2./(dxs(i-1)*(dxs(i-1)+dxs(i)))
@@ -87,7 +87,7 @@ contains
       cn3s(j) = 2./(dys(j-1)*(dys(j-1)+dys(j)))
       cn3l(j) = 2./(dys(j)*(dys(j-1)+dys(j)))
       end do
-! 
+!
       do k = 1,km
           dz1 = dzs(k-1)
           dz2 = dzs(k)
@@ -96,7 +96,7 @@ contains
       do j = 1,jm
       do i = 1,im
           cn1(i,j,k) = &
-      ! ((dxs(i)+dxs(i-1)) /(dxs(i-1)+dxs(i)))* 
+      ! ((dxs(i)+dxs(i-1)) /(dxs(i-1)+dxs(i)))*
       2./(dxs(i-1)*dxs(i))  + &
       ! ((dys(j)+dys(j-1))/(dys(j-1)+dys(j)))*
       2./(dys(j-1)*dys(j)) + &
@@ -109,4 +109,3 @@ contains
       end subroutine init
 
 end module module_init
-

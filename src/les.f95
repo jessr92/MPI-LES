@@ -26,16 +26,16 @@ contains
         integer, intent(In) :: jm
         integer, intent(In) :: km
         real(kind=4), dimension(-1:ip+1,-1:jp+1,0:kp+1) , intent(Out) :: sm
-! 
-! 
+!
+!
       cs0 = .1
 ! --length scale
         do k = 1,km
 !  WV: was          delx1(k)=(dx1(i)*dy1(j)*dzn(k))**(1./3.)
-! WV: turns out that dy1(0) is not defined!!!    
+! WV: turns out that dy1(0) is not defined!!!
           delx1(k) = (dx1(0)*dy1(0)*dzn(k))**(1./3.)
-        end do 
-!WV: so the next loop produces the undefined values ...        
+        end do
+!WV: so the next loop produces the undefined values ...
 ! ----
       do k = 1,km
       do j = 1,jm
@@ -50,7 +50,7 @@ contains
       dwdxx1 =  (diu7(i  ,j,k)+diu7(i  ,j,k-1) +diu7(i+1,j,k)+diu7(i+1,j,k-1) ) *.25
       dwdyx1 =  (diu8(i,j  ,k)+diu8(i,j  ,k-1) +diu8(i,j+1,k)+diu8(i,j+1,k-1) ) *.25
       dwdzx1 =  diu9(i,j,k)
-! 
+!
       csx1 = cs0
 ! --abl or channel
       sm(i,j,k) = ( csx1*delx1(k) )**2  * sqrt( 2.*( dudxx1**2+dvdyx1**2+dwdzx1**2 ) +( dudyx1+dvdxx1 )**2  &
@@ -64,8 +64,8 @@ contains
     print *, 'F95 GSUM after calc_sm:',sum(g)
     print *, 'F95 HSUM after calc_sm:',sum(h)
 #endif
-     
-! 
+
+!
       call boundsm(km,jm,sm,im)
 
 #ifdef WV_DEBUG
@@ -93,21 +93,21 @@ contains
       evsz1 = (dzn(k)*((dx1(i+1)*sm(i,j,k-1)+dx1(i)*sm(i+1,j, &
       k-1)) /(dx1(i)+dx1(i+1))) +dzn(k-1)*((dx1(i+1)*sm(i,j,k)+dx1(i)*sm(i+1,j, &
       k)) /(dx1(i)+dx1(i+1)))) /(dzn(k-1)+dzn(k))
-! 
+!
       visux2 = (evsx2)*2.*diu1(i+1,j  ,k  )
       visux1 = (evsx1)*2.*diu1(i  ,j,  k  )
       visuy2 = (evsy2)* ( diu2(i  ,j+1,k  )+diu4(i+1,j  ,k  ) )
       visuy1 = (evsy1)* ( diu2(i  ,j  ,k  )+diu4(i+1,j-1,k  ) )
       visuz2 = (evsz2)* ( diu3(i  ,j  ,k+1)+diu7(i+1,j  ,k  ) )
       visuz1 = (evsz1)* ( diu3(i  ,j  ,k  )+diu7(i+1,j  ,k-1) )
-! 
+!
       vfu = (visux2-visux1)/dx1(i) +(visuy2-visuy1)/dy1(j) +(visuz2-visuz1)/dzn(k)
-! 
+!
       f(i,j,k) = (f(i,j,k)+vfu)
       end do
       end do
       end do
-      
+
 ! --calculation of viscosity terms in momentum eq.(y-comp.)
       do k = 1,km
       do j = 1,jm
@@ -127,21 +127,21 @@ contains
       evsz1 = (dzn(k)*((dx1(i+1)*sm(i,j,k-1)+dx1(i)*sm(i+1,j, &
       k-1)) /(dx1(i)+dx1(i+1))) +dzn(k-1)*((dx1(i+1)*sm(i,j,k)+dx1(i)*sm(i+1,j, &
       k)) /(dx1(i)+dx1(i+1)))) /(dzn(k-1)+dzn(k))
-! 
+!
       visvx2 = (evsx2)* ( diu2(i  ,j+1,k  )+diu4(i+1,j  ,k  ) )
       visvx1 = (evsx1)* ( diu2(i-1,j+1,k  )+diu4(i  ,j  ,k  ) )
       visvy2 = (evsy2)*2.*diu5(i  ,j+1,k  )
       visvy1 = (evsy1)*2.*diu5(i  ,j  ,k  )
       visvz2 = (evsz2)* ( diu6(i  ,j  ,k+1)+diu8(i  ,j+1,k  ) )
       visvz1 = (evsz1)* ( diu6(i  ,j  ,k  )+diu8(i  ,j+1,k-1) )
-! 
+!
       vfv = (visvx2-visvx1)/dx1(i) +(visvy2-visvy1)/dy1(j) +(visvz2-visvz1)/dzn(k)
-! 
+!
       g(i,j,k) = (g(i,j,k)+vfv)
       end do
       end do
       end do
-      
+
 ! --calculation of viscosity terms in momentum eq.(z-comp.)
       do k = 1,km
       do j = 1,jm
@@ -161,32 +161,31 @@ contains
       evsy1 = (dzn(k+1)*((dy1(j)*sm(i,j-1,k)+dy1(j-1)*sm(i,j, &
       k)) /(dy1(j-1)+dy1(j))) +dzn(k)*((dy1(j)*sm(i,j-1,k+1)+dy1(j-1)*sm(i,j, &
       k+1)) /(dy1(j-1)+dy1(j)))) /(dzn(k)+dzn(k+1))
-! 
+!
       viswx2 = (evsx2)* ( diu3(i  ,j  ,k+1)+diu7(i+1,j  ,k  ) )
       viswx1 = (evsx1)* ( diu3(i-1,j  ,k+1)+diu7(i  ,j  ,k  ) )
       viswy2 = (evsy2)* ( diu6(i  ,j  ,k+1)+diu8(i  ,j+1,k  ) )
       viswy1 = (evsy1)* ( diu6(i  ,j-1,k+1)+diu8(i  ,j  ,k  ) )
       viswz2 = (evsz2)*2.*diu9(i  ,j  ,k+1)
       viswz1 = (evsz1)*2.*diu9(i  ,j  ,k  )
-    
-! 
+
+!
       vfw = (viswx2-viswx1)/dx1(i) +(viswy2-viswy1)/dy1(j) +(viswz2-viswz1)/dzn(k)
-!     if (i == 1 .and. j == 1 .and. k == 78) then    
+!     if (i == 1 .and. j == 1 .and. k == 78) then
 !    print *,'vis F:',viswx2,viswx1,viswy2,viswy1,viswz2,viswz1, vfw
 !    end if
 
-! 
+!
       h(i,j,k) = (h(i,j,k)+vfw)
       end do
       end do
       end do
-! 
+!
       return
-     
+
       end subroutine les
 
 
 
 
 end module module_les
-

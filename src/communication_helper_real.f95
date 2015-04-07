@@ -10,18 +10,10 @@ contains
 subroutine getGlobalSumOf(value)
     implicit none
     real(kind=4), intent(inout) :: value
-#ifdef GMCF
-    integer :: rank
-    call gmcfGetModelId(rank)
-#endif
 #ifdef GR_DEBUG
     print*, 'Rank: ', rank, ' before sum: ', value
 #endif
-#ifdef GMCF
-    call getGlobalSumOfGMCF(value)
-#else
     call MPI_AllReduce(MPI_IN_PLACE, value, 1, MPI_REAL, MPI_SUM, communicator, ierror)
-#endif
 #ifdef GR_DEBUG
     print*, 'Rank: ', rank, ' after sum: ', value
 #endif
@@ -33,18 +25,10 @@ end subroutine getGlobalSumOf
 subroutine getGlobalMaxOf(value)
     implicit none
     real(kind=4), intent(inout) :: value
-#ifdef GMCF
-    integer :: rank
-    call gmcfGetModelId(rank)
-#endif
 #ifdef GR_DEBUG
     print*, 'Rank: ', rank, ' before max: ', value
 #endif
-#ifdef GMCF
-    call getGlobalMaxOfGMCF(value)
-#else
     call MPI_AllReduce(MPI_IN_PLACE, value, 1, MPI_REAL, MPI_MAX, communicator, ierror)
-#endif
 #ifdef GR_DEBUG
     print*, 'Rank: ', rank, ' after max: ', value
 #endif
@@ -56,18 +40,10 @@ end subroutine getGlobalMaxOf
 subroutine getGlobalMinOf(value)
     implicit none
     real(kind=4), intent(inout) :: value
-#ifdef GMCF
-    integer :: rank
-    call gmcfGetModelId(rank)
-#endif
 #ifdef GR_DEBUG
     print*, 'Rank: ', rank, ' before min: ', value
 #endif
-#ifdef GMCF
-    call getGlobalMinOfGMCF(value)
-#else
     call MPI_AllReduce(MPI_IN_PLACE, value, 1, MPI_REAL, MPI_MIN, communicator, ierror)
-#endif
 #ifdef GR_DEBUG
     print*, 'Rank: ', rank, ' after min: ', value
 #endif

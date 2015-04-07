@@ -21,8 +21,8 @@ contains
         real(kind=4), dimension(0:ip+1,-1:jp+1,0:kp+1) , intent(In) :: v
         real(kind=4), dimension(0:ip+1,-1:jp+1,-1:kp+1) , intent(In) :: w
         real(kind=4), dimension(kp+2) , intent(In) :: z2
-! 
-! 
+!
+!
       if(n == n0.or.n == nmax.or.mod(n,1000) == 0.) then
        do k = 1,km
        do j = 1,jm
@@ -46,8 +46,8 @@ contains
       k-1)+w(i,j,k))), i=1,im),j=1,jm),k=1,km), (((real(0.5*(v(i,j-1,k)+v(i,j,k))), i=1,im),j=1, &
       jm),k=1,km), (((real(amask1(i,j,k)),i=1,im),j=1,jm),k=1,km)
        close(unit=23)
-      endif      
-! 
+      endif
+!
       return
       end subroutine anime
 
@@ -55,4 +55,3 @@ contains
 
 
 end module module_anime
-

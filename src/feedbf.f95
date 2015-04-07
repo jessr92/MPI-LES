@@ -26,7 +26,7 @@ contains
         real(kind=4), dimension(0:ip,0:jp,0:kp) , intent(InOut) :: vsum
         real(kind=4), dimension(0:ip+1,-1:jp+1,-1:kp+1) , intent(In) :: w
         real(kind=4), dimension(0:ip,0:jp,0:kp) , intent(InOut) :: wsum
-! 
+!
 #ifdef WV_DEBUG
     print *, 'F95 UVWSUMSUM after bondv1:',sum(usum)+sum(vsum)+sum(wsum)
     print *, 'F95 USUMSUM after bondv1:',sum(usum)
@@ -34,7 +34,7 @@ contains
     print *, 'F95 WSUMSUM after bondv1:',sum(wsum)
 
 #endif
-! 
+!
       do k = 1,km
       do j = 1,jm
       do i = 1,im
@@ -81,7 +81,7 @@ print *, 'F95 UVWSUM after feedbf:', sum(u)+sum(v)+sum(w)
     print *, 'F95 WSUM after feedbf:', sum(w)
 
 #endif
-! 
+!
       return
       end subroutine feedbf
 
@@ -89,4 +89,3 @@ print *, 'F95 UVWSUM after feedbf:', sum(u)+sum(v)+sum(w)
 
 
 end module module_feedbf
-
