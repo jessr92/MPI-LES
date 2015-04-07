@@ -1,60 +1,60 @@
-      program main
-        use module_init
-        use module_grid
-        use module_set
-        use module_timdata
+program main
+    use module_init
+    use module_grid
+    use module_set
+    use module_timdata
 #ifdef TIMSERIS_FIXED
-        use module_timseris
+    use module_timseris
 #endif
-        use module_aveflow
-        use module_ifdata
+    use module_aveflow
+    use module_ifdata
 #if IANIME == 1
-        use module_anime
+    use module_anime
 #endif
 #ifdef _OPENCL_LES_WV
-        use module_LES_combined_ocl
+    use module_LES_combined_ocl
 #else
-        use module_velnw
-        use module_bondv1
-        use module_velFG
+    use module_velnw
+    use module_bondv1
+    use module_velFG
 #if IFBF == 1
-        use module_feedbf
+    use module_feedbf
 #endif
-        use module_les
-        use module_press
-        use module_adam
+    use module_les
+    use module_press
+    use module_adam
 #endif
-        use common_sn
-        real(kind=4) :: alpha
-        integer :: ianime
-        integer :: ical
-        integer :: ifbf
-        integer :: im
-        integer :: jm
-        integer :: km
-        integer :: n
-        integer :: n0
-        integer :: n1
-        integer :: nmax
-        real(kind=4) :: beta
-        character(len=70) :: data10
-        character(len=70) :: data11
-        character(len=70) :: data20
-        character(len=70) :: data21
-        character(len=70) :: data22
-        character(len=70) :: data23
-        character(len=70) :: data24
-        character(len=70) :: data25
-        character(len=70) :: data26
-        character(len=70) :: data27
-        character(len=70) :: data30
-        character(len=70) :: data31
-        real(kind=4) :: dt
-        real(kind=4) :: ro
-        real(kind=4) :: time
-        real(kind=4) :: vn
+    use common_sn
+    real(kind=4) :: alpha
+    integer :: ianime
+    integer :: ical
+    integer :: ifbf
+    integer :: im
+    integer :: jm
+    integer :: km
+    integer :: n
+    integer :: n0
+    integer :: n1
+    integer :: nmax
+    real(kind=4) :: beta
+    character(len=70) :: data10
+    character(len=70) :: data11
+    character(len=70) :: data20
+    character(len=70) :: data21
+    character(len=70) :: data22
+    character(len=70) :: data23
+    character(len=70) :: data24
+    character(len=70) :: data25
+    character(len=70) :: data26
+    character(len=70) :: data27
+    character(len=70) :: data30
+    character(len=70) :: data31
+    real(kind=4) :: dt
+    real(kind=4) :: ro
+    real(kind=4) :: time
+    real(kind=4) :: vn
 #ifdef TIMINGS
-        integer :: clock_rate
+    integer :: clock_rate
 #endif
     real(kind=4), dimension(0:ip+1,0:jp+1,0:kp+1)  :: amask1
     real(kind=4), dimension(ip,jp,kp)  :: avel
@@ -153,51 +153,43 @@
 #ifdef TIMINGS
     integer (kind=4), dimension(0:9) :: timestamp
 #endif
-
-! -----------------------------------------------------------------------
-!
 #ifdef MPI
-      call initialise_mpi()
-      if (mpi_size .ne. procPerRow * procPerCol) then
-          print*, 'Needed ', (procPerRow * procPerCol), ' processes, got ', mpi_size
-          call MPI_Abort(communicator, 1, ierror)
-      end if
-      call setupCartesianVirtualTopology(dimensions, dimensionSizes, &
-                                         periodicDimensions, coordinates, &
-                                         neighbours, reorder)
-
+    call initialise_mpi()
+    if (mpi_size .ne. procPerRow * procPerCol) then
+        print*, 'Needed ', (procPerRow * procPerCol), ' processes, got ', mpi_size
+        call MPI_Abort(communicator, 1, ierror)
+    end if
+    call setupCartesianVirtualTopology(dimensions, dimensionSizes, &
+                                       periodicDimensions, coordinates, &
+                                       neighbours, reorder)
 #endif
 #ifdef USE_NETCDF_OUTPUT
     call init_netcdf_file()
 #endif
-      call set(data10,data11,data20,data21,data22,data23,data24,data25,data26,data27,data30,data31, &
-      im,jm,km,ifbf,ianime,ical,n0,n1,nmax,dt,ro,vn,alpha,beta)
-      call grid(dx1,dxl,dy1,dyl,z2,dzn,dzs,dxs,dys)
-      call timdata()
-      call init(km,jm,im,u,v,w,p,cn2s,dxs,cn2l,cn3s,dys,cn3l,dzs,cn4s,cn4l,cn1,amask1,bmask1, &
-      cmask1,dmask1,zbm,z2,dzn)
-      n=n0
-      call ifdata( &
+    call set(data10,data11,data20,data21,data22,data23,data24,data25,data26,&
+             data27,data30,data31,im,jm,km,ifbf,ianime,ical,n0,n1,nmax,dt,ro,&
+             vn,alpha,beta)
+    call grid(dx1,dxl,dy1,dyl,z2,dzn,dzs,dxs,dys)
+    call timdata()
+    call init(km,jm,im,u,v,w,p,cn2s,dxs,cn2l,cn3s,dys,cn3l,dzs,cn4s,cn4l,cn1,&
+              amask1,bmask1,cmask1,dmask1,zbm,z2,dzn)
+    n=n0
+    call ifdata( &
 #if ICAL == 1
-      data30,data31, fold,gold,hold,fghold, time &
+                data30,data31, fold,gold,hold,fghold, time &
 #endif
-      n,u,im,jm,km,v,w,p,usum,vsum,wsum, &
-      delx1,dx1,dy1,dzn,diu1,diu2,diu3,diu4,diu5,diu6,diu7,diu8,diu9,sm,f,g,h,z2,dt,dxs,cov1, &
-      cov2,cov3,dfu1,vn,cov4,cov5,cov6,dfv1,cov7,cov8,cov9,dfw1,dzs,nou1,nou5,nou9,nou2,nou3,nou4, &
-      nou6,nou7,nou8,bmask1,cmask1,dmask1,alpha,beta,fx,fy,fz,amask1,zbm)
-
+                n,u,im,jm,km,v,w,p,usum,vsum,wsum,delx1,dx1,dy1,dzn,diu1,diu2,&
+                diu3,diu4,diu5,diu6,diu7,diu8,diu9,sm,f,g,h,z2,dt,dxs,cov1, &
+                cov2,cov3,dfu1,vn,cov4,cov5,cov6,dfv1,cov7,cov8,cov9,dfw1,dzs,&
+                nou1,nou5,nou9,nou2,nou3,nou4,nou6,nou7,nou8,bmask1,cmask1,&
+                dmask1,alpha,beta,fx,fy,fz,amask1,zbm)
 #ifdef _OPENCL_LES_WV
-      call initialise_LES_kernel( &
-            p,u,v,w,usum,vsum,wsum,f,g,h,fold,gold,hold, &
-            diu1, diu2, diu3, diu4, diu5, diu6, diu7, diu8, diu9, &
-            amask1, bmask1, cmask1, dmask1, &
-            cn1, cn2l, cn2s, cn3l, cn3s, cn4l, cn4s, &
-            rhs, sm, dxs, dys, dzs, dx1, dy1, dzn, z2, &
-            dt, im, jm, km &
-              )
+    call initialise_LES_kernel(p,u,v,w,usum,vsum,wsum,f,g,h,fold,gold,hold, &
+                               diu1, diu2, diu3, diu4, diu5, diu6, diu7, diu8, &
+                               diu9, amask1, bmask1, cmask1, dmask1,cn1, cn2l, &
+                               cn2s, cn3l, cn3s, cn4l, cn4s,rhs, sm, dxs, dys, &
+                               dzs, dx1, dy1, dzn, z2,dt, im, jm, km)
 #endif
-
-
 #ifdef VERBOSE
 #ifdef _OPENCL_LES_WV
     print *,'MAIN: calling OpenCL run_LES_kernel for ', nmax-n0+1, ' time steps, domain = ',im,'x',jm,'x',km
@@ -210,20 +202,16 @@
     nmax=201
     call system_clock(timestamp(8), clock_rate)
 #endif
-      do n = n0,nmax
+    do n = n0,nmax
         time = float(n-1)*dt
 ! -------calculate turbulent flow--------c
 #ifdef _OPENCL_LES_WV
-      call run_LES_kernel ( &
-            n, nmax &
-            )
+        call run_LES_kernel(n, nmax)
 #else
 ! -------calculate turbulent flow--------c
 #ifdef TIMINGS
-         print *, 'run_LES_reference: time step = ',n
+        print *, 'run_LES_reference: time step = ',n
 #endif
-        ! ========================================================================================================================================================
-        ! ========================================================================================================================================================
 #ifdef TIMINGS
         call system_clock(timestamp(0), clock_rate)
 #endif
@@ -235,20 +223,22 @@
 #ifdef TIMINGS
         call system_clock(timestamp(2), clock_rate)
 #endif
-        call velfg(km,jm,im,dx1,cov1,cov2,cov3,dfu1,diu1,diu2,dy1,diu3,dzn,vn,f,cov4,cov5,cov6,dfv1, &
-      diu4,diu5,diu6,g,cov7,cov8,cov9,dfw1,diu7,diu8,diu9,dzs,h,nou1,u,nou5,v,nou9,w,nou2,nou3, &
-      nou4,nou6,nou7,nou8)
+        call velfg(km,jm,im,dx1,cov1,cov2,cov3,dfu1,diu1,diu2,dy1,diu3,dzn, &
+                   vn,f,cov4,cov5,cov6,dfv1,diu4,diu5,diu6,g,cov7,cov8,cov9, &
+                   dfw1,diu7,diu8,diu9,dzs,h,nou1,u,nou5,v,nou9,w,nou2,nou3, &
+                   nou4,nou6,nou7,nou8)
 #ifdef TIMINGS
         call system_clock(timestamp(3), clock_rate)
 #endif
 #if IFBF == 1
-        call feedbf(km,jm,im,usum,u,bmask1,vsum,v,cmask1,wsum,w,dmask1,alpha,dt,beta,fx,fy,fz,f,g, &
-      h)
+        call feedbf(km,jm,im,usum,u,bmask1,vsum,v,cmask1,wsum,w,dmask1,alpha, &
+                    dt,beta,fx,fy,fz,f,g,h)
 #endif
 #ifdef TIMINGS
         call system_clock(timestamp(4), clock_rate)
 #endif
-        call les(km,delx1,dx1,dy1,dzn,jm,im,diu1,diu2,diu3,diu4,diu5,diu6,diu7,diu8,diu9,sm,f,g,h)
+        call les(km,delx1,dx1,dy1,dzn,jm,im,diu1,diu2,diu3,diu4,diu5,diu6, &
+                 diu7,diu8,diu9,sm,f,g,h)
 #ifdef TIMINGS
         call system_clock(timestamp(5), clock_rate)
 #endif
@@ -256,37 +246,38 @@
 #ifdef TIMINGS
         call system_clock(timestamp(6), clock_rate)
 #endif
-        call press(km,jm,im,rhs,u,dx1,v,dy1,w,dzn,f,g,h,dt,cn1,cn2l,p,cn2s,cn3l,cn3s,cn4l,cn4s,n, &
-      nmax,data20,usum,vsum,wsum)
+        call press(km,jm,im,rhs,u,dx1,v,dy1,w,dzn,f,g,h,dt,cn1,cn2l,p,cn2s, &
+                   cn3l,cn3s,cn4l,cn4s,n, nmax,data20,usum,vsum,wsum)
 #ifdef TIMINGS
         call system_clock(timestamp(7), clock_rate)
         do i=1, 7
-            print '("Time for state ",i2," = ",f6.3," s")',i,(timestamp(i)-timestamp(i-1))/ real(clock_rate)
+            print '("Time for state ",i2," = ",f6.3," s")',i, &
+                  (timestamp(i)-timestamp(i-1))/ real(clock_rate)
         end do
 #endif
-
 #endif
 ! -------data output ---------------------c
 ! WV: This is clearly broken, as the dimensions for u/v/w are 150x150x90
 #ifdef TIMSERIS_FIXED
         call timseris(n,dt,u,v,w)
 #endif
-        call aveflow(n,n1,km,jm,im,aveu,avev,avew,avep,avel,aveuu,avevv,aveww,avesm,avesmsm,uwfx, &
-      avesu,avesv,avesw,avesuu,avesvv,avesww,u,v,w,p,sm,nmax,uwfxs,data10,time,data11)
+        call aveflow(n,n1,km,jm,im,aveu,avev,avew,avep,avel,aveuu,avevv,aveww, &
+                     avesm,avesmsm,uwfx,avesu,avesv,avesw,avesuu,avesvv, &
+                     avesww,u,v,w,p,sm,nmax,uwfxs,data10,time,data11)
 #if IANIME == 1
-        call anime(n,n0,nmax,km,jm,im,dxl,dx1,dyl,dy1,z2,data22,data23,u,w,v,amask1)
+        call anime(n,n0,nmax,km,jm,im,dxl,dx1,dyl,dy1,z2,data22,data23,u,w,v,&
+                   amask1)
 #endif
-!
-      end do
+    end do
 #ifdef USE_NETCDF_OUTPUT
     call close_netcdf_file()
 #endif
 #ifdef TIMINGS
     call system_clock(timestamp(9))
-    print *,"Total time:" ,(timestamp(9)-timestamp(8))/real(clock_rate),"s for ",nmax-n0,"iterations"
+    print *,"Total time:" ,(timestamp(9)-timestamp(8))/real(clock_rate), &
+          "s for ",nmax-n0,"iterations"
 #endif
-
 #ifdef MPI
-      call finalise_mpi()
+    call finalise_mpi()
 #endif
-      end program
+end program
