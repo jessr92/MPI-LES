@@ -2,9 +2,6 @@ module communication_helper_real
 #ifdef MPI
 use communication_helper_mpi
 #endif
-#ifdef GMCF
-use communication_helper_gmcf
-#endif
 
 implicit none
 
